@@ -1,9 +1,10 @@
 <?php
+
 $nombre = "Samuel Guzman";
 $fecha = date("d/m/Y");
 $edad = 23;
 
-
+$aPeliculas array = ("el caballero de la noche, her, la doble vida de veronica");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -40,7 +41,7 @@ $edad = 23;
                         </tr>
                         <tr>
                             <th>Peliculas favoritas</th>
-                            <td>Her <br>
+                            <td><?php echo $aPeliculas (1); ?>  <br>
                                 The dark knight <br>
                                 La doble vida de Veronica
                         </tr>
