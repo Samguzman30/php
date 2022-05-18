@@ -3,13 +3,22 @@ ini_set ("display errors" ,1);
 ini_set("display_startup_errors", 1);
 error_reporting(E_ALL);
 
+if (file_exists("archivo.txt")){
+    //si el archivo existe se cargan los clientes
+    $strJson = file_get_contents("archivo.txt");
+    $aClientes = json_decode($strJson, true);
+    
+} else{
+    //si el archivo no existe es porque el array esta vacio, no hay datos para llenar
+    $aClientes = array();
+}
 if ($_POST){
     $dni = $_POST["txtDni"];
     $nombre = $_POST["txtNombre"];
     $telefono = $_POST["txtTelefono"];
     $correo = $_POST["txtCorreo"];
 
-    $aClientes = array();
+    
     $aClientes[] = array ("dni" => $dni,
                           "nombre" => $nombre,
                           "telefono" => $telefono,
@@ -81,7 +90,17 @@ if ($_POST){
                 <th>Correo</th>
                 <th>Acciones</th>
                 </div>
+            <?php foreach ($aClientes as $cliente) { ?>
+        
+                <tr>
+             <td></td>
+             <td> <?php echo $cliente["dni"]; ?> </td>
+             <td><?php echo $cliente["nombre"]; ?> </td>
+             <td><?php echo $cliente["correo"]; ?> </td>
+             <td></td>
 
+            </tr>
+            <?php } ?>
 
     </main>
 </body>
