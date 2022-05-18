@@ -1,1 +1,1 @@
-[{"dni":"95694240","nombre":"samuel","telefono":"1140452943","correo":"19samuelguzman@gmail.com"},{"dni":"95694240","nombre":"samuel","telefono":"1140452943","correo":"19samuelguzman@gmail.com"},{"dni":"95694240","nombre":"samuel","telefono":"1140452943","correo":"19samuelguzman@gmail.com"}]
+[{"dni":"95694240","nombre":"samuel","telefono":"1140452943","correo":"19samuelguzman@gmail.com"}]

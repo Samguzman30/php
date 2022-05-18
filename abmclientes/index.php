@@ -12,17 +12,34 @@ if (file_exists("archivo.txt")){
     //si el archivo no existe es porque el array esta vacio, no hay datos para llenar
     $aClientes = array();
 }
+if (isset ($_GET["id"])){
+
+$id = $_GET["id"];
+} else{
+$id = "";
+}
+if (isset($_GET["do"]) && $_GET["do"] == "eliminar"){
+ unset($aClientes[$id]);
+//convertir array en json
+$strJson = json_encode($aClientes);
+//almacenar en el json
+file_put_contents("archivo.txt", $strJson);
+
+header("location: index.php"); //para cargar el archivo nuevamente 
+}
+
 if ($_POST){
     $dni = $_POST["txtDni"];
     $nombre = $_POST["txtNombre"];
     $telefono = $_POST["txtTelefono"];
     $correo = $_POST["txtCorreo"];
-
+    $nombreImagen = "";
     
     $aClientes[] = array ("dni" => $dni,
                           "nombre" => $nombre,
                           "telefono" => $telefono,
-                          "correo" => $correo
+                          "correo" => $correo,
+                          "imagen" => $nombreImagen
                         ); 
                            //convertir array en json para almacenar
                            $strJson = json_encode($aClientes); 
@@ -40,7 +57,8 @@ if ($_POST){
     <meta name="viewport" content="width=, initial-scale=1.0">
     <title>ABM Clientes</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="css/fontawesome/css/fontawesome.min.css">
 </head>
 <body>
     <main class="container">
@@ -50,26 +68,26 @@ if ($_POST){
     </div>
     <div class="row">
         <div class="col-5">
-            <form action="" method="post">
+            <form action="" method="post" enctype="multipart/form-data">
 
             <div>
             <label for="txtDni">DNI:*</label>
-            <input type="number" name="txtDni" id="txtDni" class="form-control" required>
+            <input type="number" name="txtDni" id="txtDni" class="form-control" required value="<?php echo isset(($_GET["id"]))? $aClientes[$id]["dni"] : ""; ?>">
             </div>
 
             <div>
             <label for="txtNombre">Nombre:*</label>
-            <input type="text" name="txtNombre" id="txtNombre" class="form-control" required>
+            <input type="text" name="txtNombre" id="txtNombre" class="form-control" required value="<?php echo isset(($_GET["id"]))? $aClientes[$id]["nombre"] : ""; ?>">
             </div>
 
             <div>
             <label for="txtTelefono">Telefono:*</label>
-            <input type="number" name="txtTelefono" id="txtTelefono" class="form-control" required>
+            <input type="number" name="txtTelefono" id="txtTelefono" class="form-control" required value="<?php echo isset(($_GET["id"]))? $aClientes[$id]["telefono"] : ""; ?>">
             </div>
 
             <div>
             <label for="txtCorreo">Correo:*</label>
-            <input type="email" name="txtCorreo" id="txtCorreo" class="form-control" required>
+            <input type="email" name="txtCorreo" id="txtCorreo" class="form-control" required value="<?php echo isset(($_GET["id"]))? $aClientes[$id]["correo"] : ""; ?>">
             </div>
          <p class="my-3">Archivo adjunto: <input type="file" name="" id="" accept=".jpg, ,jpeg, .png"> <br>
          archivos admitivos: .jpg, .jpeg, .png</p>
@@ -90,14 +108,16 @@ if ($_POST){
                 <th>Correo</th>
                 <th>Acciones</th>
                 </div>
-            <?php foreach ($aClientes as $cliente) { ?>
+            <?php foreach ($aClientes as $pos => $cliente) { ?>
         
                 <tr>
-             <td></td>
+             <td><img src="imagenes/<?php echo $cliente["imagen"]; ?>" class="img-thumbnail" alt=""></td>
              <td> <?php echo $cliente["dni"]; ?> </td>
              <td><?php echo $cliente["nombre"]; ?> </td>
              <td><?php echo $cliente["correo"]; ?> </td>
-             <td></td>
+             <td> <a href="?id=<?php echo $pos; ?>"> <i class="fa-solid fa-pen-to-square"></i></a>
+             <a href="?id=<?php echo $pos; ?>&do=eliminar"><i  class="fa-solid fa-trash"></i></a>
+            </td>
 
             </tr>
             <?php } ?>
