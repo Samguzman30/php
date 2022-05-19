@@ -13,11 +13,11 @@ if (file_exists("archivo.txt")){
     $aClientes = array();
 }
 if (isset ($_GET["id"])){
-
 $id = $_GET["id"];
 } else{
 $id = "";
 }
+
 if (isset($_GET["do"]) && $_GET["do"] == "eliminar"){
  unset($aClientes[$id]);
 //convertir array en json
@@ -34,13 +34,44 @@ if ($_POST){
     $telefono = $_POST["txtTelefono"];
     $correo = $_POST["txtCorreo"];
     $nombreImagen = "";
-    
+
+    if ($_FILES["archivo"]["error"] === UPLOAD_ERR_OK) {
+        $nombreAleatorio = date("ymdhmsi") . rand(1000, 2000); //202205101849371010
+        $archivo_tmp = $_FILES["archivo"]["tmp_name"];
+        $extension = pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION);
+        if ($extension == "jpg" || $extension == "png" || $extension == "jpeg"){
+            $nombreImagen = "$nombreAleatorio.$extension"; 
+        move_uploaded_file($archivo_tmp, "imagenes/$nombreImagen"); //guarda el archivo fisicamente 
+        //files/202215241.pdf
+    }
+}
+if ($id >= 0){
+
+    if ($_FILES["archivo"]["error"] !== UPLOAD_ERR_OK) {
+        $nombreImagen = $aClientes[$id]["imagen"];
+
+} else{
+    //si viene una imagen nueva, eliminar la anterior
+
+if (file_exists("imagenes/". $aClientes[$id]["imagen"])){
+    unlink("imagenes/". $aClientes[$id]["imagen"]);
+}
+
+}
+    //estoy editanto
+    $aClientes[$id] = array ("dni" => $dni,
+    "nombre" => $nombre,
+    "telefono" => $telefono,
+    "correo" => $correo,
+    "imagen" => $nombreImagen);
+} else{
+    //estoy insertando
     $aClientes[] = array ("dni" => $dni,
-                          "nombre" => $nombre,
-                          "telefono" => $telefono,
-                          "correo" => $correo,
-                          "imagen" => $nombreImagen
-                        ); 
+    "nombre" => $nombre,
+    "telefono" => $telefono,
+    "correo" => $correo,
+    "imagen" => $nombreImagen);
+}
                            //convertir array en json para almacenar
                            $strJson = json_encode($aClientes); 
                            //almacenar en archivo.txt en json
@@ -68,7 +99,7 @@ if ($_POST){
     </div>
     <div class="row">
         <div class="col-5">
-            <form action="" method="post" enctype="multipart/form-data">
+            <form action="" method="POST" enctype="multipart/form-data">
 
             <div>
             <label for="txtDni">DNI:*</label>
@@ -89,15 +120,15 @@ if ($_POST){
             <label for="txtCorreo">Correo:*</label>
             <input type="email" name="txtCorreo" id="txtCorreo" class="form-control" required value="<?php echo isset(($_GET["id"]))? $aClientes[$id]["correo"] : ""; ?>">
             </div>
-         <p class="my-3">Archivo adjunto: <input type="file" name="" id="" accept=".jpg, ,jpeg, .png"> <br>
-         archivos admitivos: .jpg, .jpeg, .png</p>
+         <p class="my-3">Archivo adjunto: <input type="file" name="archivo" id="" accept=".jpg, ,jpeg, .png"> <br>
+        archivos admitivos: .jpg, .jpeg, .png</p>
             <div class="my-3">
                 <button type="submit" name="btnGuardar" class="btn bg-primary text-white">Guardar</button>
-                <button type="submit" name="btnNuevo" class="btn bg-danger text-white">NUEVO</button>
+                <a href="index.php" class="btn btn-danger text-white">NUEVO</a>
 
             </div>
+            
             </form>
-
 
         </div>
         <div class="col-7 text-center">
@@ -111,7 +142,7 @@ if ($_POST){
             <?php foreach ($aClientes as $pos => $cliente) { ?>
         
                 <tr>
-             <td><img src="imagenes/<?php echo $cliente["imagen"]; ?>" class="img-thumbnail" alt=""></td>
+             <td><img src="imagenes/<?php echo $cliente["imagen"]; ?>" class="img-thumbnail"></td>
              <td> <?php echo $cliente["dni"]; ?> </td>
              <td><?php echo $cliente["nombre"]; ?> </td>
              <td><?php echo $cliente["correo"]; ?> </td>
@@ -121,7 +152,7 @@ if ($_POST){
 
             </tr>
             <?php } ?>
-
+            
     </main>
 </body>
 </html>
