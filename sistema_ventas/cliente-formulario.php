@@ -30,7 +30,7 @@ if($_POST){
 } 
 
 if(isset($_GET["do"]) && $_GET["do"] == "buscarLocalidad" && $_GET["id"] && $_GET["id"] > 0){
-    $idProvincia = $_GET["id"];
+    $idProvincia = $_REQUEST["id"];
     $localidad = new Localidad();
     $aLocalidad = $localidad->obtenerPorProvincia($idProvincia);
     echo json_encode($aLocalidad);
